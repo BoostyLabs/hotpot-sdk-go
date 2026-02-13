@@ -21,7 +21,7 @@ go run examples/<example_name>/main.go
 
 ### Using .env file
 
-Alternatively, you can use a `.env` file. Copy the provided `.example.env` to `<your_file>` and fill in the values:
+Alternatively, you can use a `.env` file. Copy the provided `.env.example` to `<your_file>` and fill in the values:
 
 ```bash
 cp examples/.env.example <your_file>
