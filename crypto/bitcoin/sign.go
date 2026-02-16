@@ -13,7 +13,7 @@ import (
 	"github.com/btcsuite/btcd/wire"
 )
 
-// Signer is the abstraction over the bitcoin private key for P2TR key-spend path signture.
+// Signer is the abstraction over the bitcoin private key for P2TR key-spend path signature.
 type Signer struct{ pk *btcec.PrivateKey }
 
 // NewSigner creates a new Signer instance from a private key hex string.
