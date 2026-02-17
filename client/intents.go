@@ -29,48 +29,45 @@ type CreateIntentResponse struct {
 	types.ApprovalToSign
 }
 
-func newCreateIntentResponseFromCodec(raw createIntentResponseCodec) (CreateIntentResponse, error) {
-	resp := CreateIntentResponse{
-		ID:         raw.ID,
-		Deadline:   raw.Deadline,
-		SecretHash: raw.SecretHash,
-		ApprovalToSign: types.ApprovalToSign{
-			ApprovalMechanism: raw.ApprovalMechanism,
-		},
+func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
+	type createIntentResponseCodec struct {
+		ID                uuid.UUID                `json:"intent_id"`
+		Deadline          int64                    `json:"deadline_secs"`
+		SecretHash        string                   `json:"secret_hash"`
+		ApprovalMechanism types.ApprovalToSignType `json:"approval_mechanism"`
+		ParamsToSign      json.RawMessage          `json:"params_to_sign"`
 	}
+
+	var raw createIntentResponseCodec
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	resp.ID = raw.ID
+	resp.Deadline = raw.Deadline
+	resp.SecretHash = raw.SecretHash
+	resp.ApprovalToSign = types.ApprovalToSign{ApprovalMechanism: raw.ApprovalMechanism}
 
 	switch raw.ApprovalMechanism {
 	case types.ApprovalToSignTypePermit2:
 		resp.Permit2 = new(types.ApprovalToSignPermit2)
-		return resp, json.Unmarshal(raw.ParamsToSign, resp.Permit2)
+		return json.Unmarshal(raw.ParamsToSign, resp.Permit2)
 	case types.ApprovalToSignTypeHtlc:
 		resp.Htlc = new(types.ApprovalToSignHtlc)
-		return resp, json.Unmarshal(raw.ParamsToSign, resp.Htlc)
+		return json.Unmarshal(raw.ParamsToSign, resp.Htlc)
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
-		return resp, json.Unmarshal(raw.ParamsToSign, resp.Cosign)
+		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
 	default:
-		return resp, fmt.Errorf("unrecognized approval mechanism %v", resp.ApprovalMechanism)
+		return fmt.Errorf("unrecognized approval mechanism %v", resp.ApprovalMechanism)
 	}
-}
-
-type createIntentResponseCodec struct {
-	ID                uuid.UUID                `json:"intent_id"`
-	Deadline          int64                    `json:"deadline_secs"`
-	SecretHash        string                   `json:"secret_hash"`
-	ApprovalMechanism types.ApprovalToSignType `json:"approval_mechanism"`
-	ParamsToSign      json.RawMessage          `json:"params_to_sign"`
 }
 
 func (c *Client) CreateIntent(ctx context.Context, req CreateIntentRequest) (CreateIntentResponse, error) {
-	var resp = createIntentResponseCodec{}
+	var resp = CreateIntentResponse{}
 	var endpoint = c.buildURL("intents")
 
-	if err := c.doRequest(ctx, http.MethodPost, endpoint, &req, &resp); err != nil {
-		return CreateIntentResponse{}, err
-	}
-
-	return newCreateIntentResponseFromCodec(resp)
+	return resp, c.doRequest(ctx, http.MethodPost, endpoint, &req, &resp)
 }
 
 // AddIntentApprovalParams represents parameters required to submit an approval for a specific intent.
