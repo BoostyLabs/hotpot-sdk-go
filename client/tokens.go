@@ -3,7 +3,8 @@ package client
 import (
 	"context"
 	"net/http"
-	"strings"
+	"net/url"
+	"strconv"
 
 	"github.com/BoostyLabs/hotpot-sdk-go/types"
 )
@@ -20,36 +21,35 @@ type ListTokenParams struct {
 	NetworkID int64
 }
 
+func (params *ListTokenParams) toQueryParams() string {
+	q := make(url.Values, 4)
+
+	if params.Limit != 0 {
+		q.Set("limit", strconv.FormatInt(params.Limit, 10))
+	}
+
+	if params.Offset != 0 {
+		q.Set("offset", strconv.FormatInt(params.Offset, 10))
+	}
+
+	if params.Query != "" {
+		q.Set("q", params.Query)
+	}
+
+	if params.NetworkID != 0 {
+		q.Set("network_id", strconv.FormatInt(params.NetworkID, 10))
+	}
+
+	return q.Encode()
+}
+
 // ListTokenResponse represents the response type for listing tokens.
 type ListTokenResponse Page[types.Token]
 
 // ListTokens returns the list of all supported tokens with optional filtration.
 func (c *Client) ListTokens(ctx context.Context, params ListTokenParams) (ListTokenResponse, error) {
 	var resp = ListTokenResponse{}
-	var queryParams = make([]string, 0, 4)
-	var args = make([]any, 0, 4)
-
-	if params.Limit != 0 {
-		queryParams = append(queryParams, "limit=%d")
-		args = append(args, params.Limit)
-	}
-
-	if params.Offset != 0 {
-		queryParams = append(queryParams, "offset=%d")
-		args = append(args, params.Offset)
-	}
-
-	if params.Query != "" {
-		queryParams = append(queryParams, "q=%s")
-		args = append(args, params.Query)
-	}
-
-	if params.NetworkID != 0 {
-		queryParams = append(queryParams, "network_id=%d")
-		args = append(args, params.NetworkID)
-	}
-
-	var endpoint = c.buildURL("tokens?"+strings.Join(queryParams, "&"), args...)
+	var endpoint = c.buildURL("tokens?%s", params.toQueryParams())
 
 	return resp, c.doRequest(ctx, http.MethodGet, endpoint, nil, &resp)
 }

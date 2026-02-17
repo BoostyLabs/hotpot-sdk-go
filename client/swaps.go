@@ -3,7 +3,8 @@ package client
 import (
 	"context"
 	"net/http"
-	"strings"
+	"net/url"
+	"strconv"
 
 	"github.com/google/uuid"
 
@@ -35,39 +36,37 @@ type ListSwapHistoryParams struct {
 	RetailID string
 }
 
+func (params *ListSwapHistoryParams) toQueryParams() string {
+	q := make(url.Values, 5)
+
+	if params.Limit != 0 {
+		q.Set("limit", strconv.FormatInt(params.Limit, 10))
+	}
+
+	if params.Offset != 0 {
+		q.Set("offset", strconv.FormatInt(params.Offset, 10))
+	}
+
+	q.Set("active", strconv.FormatBool(params.Active))
+
+	for _, wallet := range params.Wallets {
+		q.Add("wallet", wallet)
+	}
+
+	if params.RetailID != "" {
+		q.Set("retail_id", params.RetailID)
+	}
+
+	return q.Encode()
+}
+
 // ListSwapHistoryResponse represents the response payload for retrieving a swap history.
 type ListSwapHistoryResponse Page[types.Swap]
 
 // ListSwapHistory retrieves a swap by its intent ID.
 func (c *Client) ListSwapHistory(ctx context.Context, params ListSwapHistoryParams) (ListSwapHistoryResponse, error) {
 	var resp = ListSwapHistoryResponse{}
-	var queryParams = make([]string, 0, 4+len(params.Wallets))
-	var args = make([]any, 0, 4+len(params.Wallets))
-
-	if params.Limit != 0 {
-		queryParams = append(queryParams, "limit=%d")
-		args = append(args, params.Limit)
-	}
-
-	if params.Offset != 0 {
-		queryParams = append(queryParams, "offset=%d")
-		args = append(args, params.Offset)
-	}
-
-	queryParams = append(queryParams, "active=%t")
-	args = append(args, params.Active)
-
-	for _, wallet := range params.Wallets {
-		queryParams = append(queryParams, "wallet=%s")
-		args = append(args, wallet)
-	}
-
-	if params.RetailID != "" {
-		queryParams = append(queryParams, "retail_id=%s")
-		args = append(args, params.RetailID)
-	}
-
-	var endpoint = c.buildURL("swaps/history?"+strings.Join(queryParams, "&"), args...)
+	var endpoint = c.buildURL("swaps/history?%s", params.toQueryParams())
 
 	return resp, c.doRequest(ctx, http.MethodGet, endpoint, nil, &resp)
 }
