@@ -27,6 +27,7 @@ func main() {
 		Amount:      2.,
 		Slippage:    slippageBps,
 		SwapType:    types.SwapTypeStandard,
+		DepositType: types.DepositTypeEscrowed,
 		// RetailUserID: "optional retail user id, now not set",
 	})
 	if err != nil {

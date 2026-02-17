@@ -49,11 +49,29 @@ func BuildTypedData(quote *types.Quote, permit2Data *types.ApprovalToSignPermit2
 	}
 
 	return apitypes.TypedData{
-		Types:       permit2Data.AdditionalData.Types,
+		Types:       InjectDomainTypeDef(permit2Data.AdditionalData.Types),
 		PrimaryType: PrimaryType,
 		Domain:      permit2Data.AdditionalData.Domain,
 		Message:     message,
 	}, nil
+}
+
+// InjectDomainTypeDef adds the EIP712Domain type definition if it doesn't already exist in the provided types definition map.
+func InjectDomainTypeDef(typesDef apitypes.Types) apitypes.Types {
+	updated := make(apitypes.Types, len(typesDef)+1)
+	for k, v := range typesDef {
+		updated[k] = v
+	}
+	if _, ok := typesDef[EIP712Domain]; !ok {
+		updated[EIP712Domain] = []apitypes.Type{
+			{Name: "name", Type: "string"},
+			{Name: "version", Type: "string"},
+			{Name: "chainId", Type: "uint256"},
+			{Name: "verifyingContract", Type: "address"},
+		}
+	}
+
+	return updated
 }
 
 // ExtractWitnessType extracts and returns the witness type definition from the provided type definitions.

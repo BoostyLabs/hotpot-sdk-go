@@ -71,9 +71,15 @@ func (c *Client) doRequest(ctx context.Context, method, endpoint string, body an
 	defer func() { err = errors.Join(err, resp.Body.Close()) }()
 
 	if resp.StatusCode != http.StatusOK {
+		var responseBody []byte
+		responseBody, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("failed to read response body: %w", err)
+		}
+
 		var errResp = &ApiError{}
-		if err = json.NewDecoder(resp.Body).Decode(errResp); err != nil {
-			return fmt.Errorf("failed to decode error response: %w", err)
+		if err = json.Unmarshal(responseBody, errResp); err != nil {
+			return fmt.Errorf("failed to decode error response: %w; raw response: %s", err, string(responseBody))
 		}
 
 		return errResp
