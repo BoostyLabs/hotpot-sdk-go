@@ -17,7 +17,7 @@ type Config struct {
 	BaseUrl string `env:"HOTPOT_BASE_URL,unset" envDefault:"https://api.hotpot.tech,unset"`
 
 	WalletAddresses []string  `env:"WALLET_ADDRESSES,unset" envSeparator:","`
-	RetailID        string    `env:"RETAILER_ID,unset"`
+	RetailID        string    `env:"RETAIL_ID,unset"`
 	Token           string    `env:"TOKEN,unset"`
 	TokenQuery      string    `env:"TOKEN_QUERY,unset"`
 	NetworkID       int64     `env:"NETWORK_ID,unset"`
