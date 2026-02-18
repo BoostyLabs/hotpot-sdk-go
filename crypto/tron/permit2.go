@@ -52,8 +52,9 @@ func BuildTypedData(quote *types.Quote, permit2Data *types.ApprovalToSignPermit2
 		"witness":  witnessMessage,
 	}
 
+	// INFO: Ignore domain version if any.
 	return apitypes.TypedData{
-		Types:       InjectDomainTypeDef(permit2Data.AdditionalData.Types),
+		Types:       evm.InjectDomainTypeDef(permit2Data.AdditionalData.Types),
 		PrimaryType: evm.PrimaryType,
 		Domain: apitypes.TypedDataDomain{
 			Name:              permit2Data.AdditionalData.Domain.Name,
@@ -62,23 +63,6 @@ func BuildTypedData(quote *types.Quote, permit2Data *types.ApprovalToSignPermit2
 		},
 		Message: message,
 	}, nil
-}
-
-// InjectDomainTypeDef adds the TIP712Domain type definition if it doesn't already exist in the provided types definition map.
-func InjectDomainTypeDef(typesDef apitypes.Types) apitypes.Types {
-	updated := make(apitypes.Types, len(typesDef)+1)
-	for k, v := range typesDef {
-		updated[k] = v
-	}
-	if _, ok := typesDef[evm.EIP712Domain]; !ok {
-		updated[evm.EIP712Domain] = []apitypes.Type{
-			{Name: "name", Type: "string"},
-			{Name: "chainId", Type: "uint256"},
-			{Name: "verifyingContract", Type: "address"},
-		}
-	}
-
-	return updated
 }
 
 // normalizeAddresses performs conversion to each address in the slice, updating them.

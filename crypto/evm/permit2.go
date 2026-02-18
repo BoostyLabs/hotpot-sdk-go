@@ -48,11 +48,16 @@ func BuildTypedData(quote *types.Quote, permit2Data *types.ApprovalToSignPermit2
 		"witness":  witnessMessage,
 	}
 
+	// INFO: Ignore domain version if any.
 	return apitypes.TypedData{
 		Types:       InjectDomainTypeDef(permit2Data.AdditionalData.Types),
 		PrimaryType: PrimaryType,
-		Domain:      permit2Data.AdditionalData.Domain,
-		Message:     message,
+		Domain: apitypes.TypedDataDomain{
+			Name:              permit2Data.AdditionalData.Domain.Name,
+			ChainId:           permit2Data.AdditionalData.Domain.ChainId,
+			VerifyingContract: permit2Data.AdditionalData.Domain.VerifyingContract,
+		},
+		Message: message,
 	}, nil
 }
 
@@ -65,7 +70,6 @@ func InjectDomainTypeDef(typesDef apitypes.Types) apitypes.Types {
 	if _, ok := typesDef[EIP712Domain]; !ok {
 		updated[EIP712Domain] = []apitypes.Type{
 			{Name: "name", Type: "string"},
-			{Name: "version", Type: "string"},
 			{Name: "chainId", Type: "uint256"},
 			{Name: "verifyingContract", Type: "address"},
 		}
