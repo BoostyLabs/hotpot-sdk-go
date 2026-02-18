@@ -72,7 +72,7 @@ type ApprovalToSignCosign struct {
 type IntentApproval struct {
 	approvalMechanism ApprovalToSignType
 	permit2           *string
-	htlc              *string
+	psbt              *string
 	cosign            *CosignApproval
 }
 
@@ -88,7 +88,7 @@ func NewPermit2IntentApproval(permit2Signature string) IntentApproval {
 func NewHtlcIntentApproval(psbt string) IntentApproval {
 	return IntentApproval{
 		approvalMechanism: ApprovalToSignTypeHtlc,
-		htlc:              &psbt,
+		psbt:              &psbt,
 	}
 }
 
@@ -108,8 +108,9 @@ func (a *IntentApproval) MarshalJSON() ([]byte, error) {
 	switch {
 	case a.approvalMechanism == ApprovalToSignTypePermit2 && a.permit2 != nil:
 		v.SignedData = *a.permit2
-	case a.approvalMechanism == ApprovalToSignTypeHtlc && a.htlc != nil:
-		v.SignedData = *a.htlc
+	case a.approvalMechanism == ApprovalToSignTypeHtlc && a.psbt != nil:
+		v.Type = "psbt"
+		v.SignedData = *a.psbt
 	case a.approvalMechanism == ApprovalToSignTypeCosign && a.cosign != nil:
 		v.SignedData = *a.cosign
 	default:
