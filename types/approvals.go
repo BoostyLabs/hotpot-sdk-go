@@ -103,7 +103,7 @@ func NewCosignIntentApproval(transaction string, userAddress string) IntentAppro
 	}
 }
 
-func (a IntentApproval) MarshalJSON() ([]byte, error) {
+func (a *IntentApproval) MarshalJSON() ([]byte, error) {
 	var v = addIntentApprovalRequestCodec{Type: string(a.approvalMechanism)}
 	switch {
 	case a.approvalMechanism == ApprovalToSignTypePermit2 && a.permit2 != nil:
