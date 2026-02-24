@@ -57,8 +57,8 @@ const (
 	UserWithdrawTaskEntityKind EntityKind = "UserWithdrawTask"
 	// OtherEntityKind defines 'Other' entity kind.
 	OtherEntityKind EntityKind = "Other"
-	// HtlcEntityKind defines 'htlc' entity kind.
-	HtlcEntityKind EntityKind = "htlc"
+	// HtlcEntityKind defines 'Htlc' entity kind.
+	HtlcEntityKind EntityKind = "Htlc"
 	// ResolverApiClientEntityKind defines 'ResolverApiClient' entity kind.
 	ResolverApiClientEntityKind EntityKind = "ResolverApiClient"
 )
