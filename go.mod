@@ -1,6 +1,6 @@
 module github.com/BoostyLabs/hotpot-sdk-go
 
-go 1.25.5
+go 1.24.0
 
 require (
 	github.com/btcsuite/btcd v0.25.0
