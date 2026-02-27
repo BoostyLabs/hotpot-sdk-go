@@ -19,6 +19,12 @@ func main() {
 		log.Fatalf("failed to parse slippage: %v", err)
 	}
 
+	feeBps, err := types.NewIntFromPercent(0.5)
+	if err != nil {
+		log.Fatalf("failed to parse affiliate fee bps: %v", err)
+	}
+	_ = feeBps
+
 	quote, err := apiClient.GetTheBestQuote(ctx, client.GetTheBestQuoteRequest{
 		SourceChain: 1,
 		SourceToken: "0xdac17f958d2ee523a2206206994597c13d831ec7", // usdt.
@@ -29,6 +35,13 @@ func main() {
 		SwapType:    types.SwapTypeStandard,
 		DepositType: types.DepositTypeEscrowed,
 		// RetailUserID: "optional retail user id, now not set",
+		// AffiliateFees: map[string]client.RequestedFee{
+		//	 "affiliate_1": {
+		//		 FeeBps:    feeBps,
+		//		 NetworkID: 1,
+		//		 Token:     "0xdac17f958d2ee523a2206206994597c13d831ec7", // usdt.
+		//	 },
+		// },
 	})
 	if err != nil {
 		log.Fatalf("failed to get a quote: %v", err)
