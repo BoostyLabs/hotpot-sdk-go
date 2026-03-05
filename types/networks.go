@@ -1,5 +1,6 @@
 package types
 
+// Network represents the network entity data.
 type Network struct {
 	ID                    int64       `json:"id"`
 	Name                  string      `json:"name"`

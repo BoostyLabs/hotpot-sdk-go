@@ -47,6 +47,7 @@ const (
 	DepositTypeDirect DepositType = "direct"
 )
 
+// EstimatedFee represents the estimated fee for a specific token.
 type EstimatedFee struct {
 	FeeBps            *Int   `json:"fee_bps"`
 	NetworkID         uint64 `json:"network_id"`

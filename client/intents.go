@@ -29,6 +29,7 @@ type CreateIntentResponse struct {
 	types.ApprovalToSign
 }
 
+// UnmarshalJSON implements json.Unmarshaler interface.
 func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	type createIntentResponseCodec struct {
 		ID                uuid.UUID                `json:"intent_id"`
@@ -63,6 +64,7 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// CreateIntent creates a new intent using the provided request data and returns the created intent details or an error.
 func (c *Client) CreateIntent(ctx context.Context, req CreateIntentRequest) (CreateIntentResponse, error) {
 	var resp = CreateIntentResponse{}
 	var endpoint = c.buildURL("intents")
