@@ -30,6 +30,7 @@ func NewIntFromPercent(percent float64) (*Int, error) {
 	return NewInt(int64(math.Round(percent * PercentToBps))), nil
 }
 
+// MarshalJSON implements the json.Marshaler interface.
 func (i *Int) MarshalJSON() ([]byte, error) {
 	buf := new(bytes.Buffer)
 	buf.WriteByte('"')
@@ -38,6 +39,7 @@ func (i *Int) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (i *Int) UnmarshalJSON(b []byte) error {
 	b = bytes.Trim(b, `"`)
 	return i.Int.UnmarshalJSON(b)
