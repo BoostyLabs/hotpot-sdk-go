@@ -9,15 +9,22 @@ import (
 
 // GetTheBestQuoteRequest represents parameters to receive the best quote.
 type GetTheBestQuoteRequest struct {
-	SourceChain  uint64            `json:"source_chain"`
-	SourceToken  string            `json:"source_token"`
-	DestChain    uint64            `json:"dest_chain"`
-	DestToken    string            `json:"dest_token"`
-	Amount       float64           `json:"amount"`
-	Slippage     *types.Int        `json:"slippage_bps"`
-	SwapType     types.SwapType    `json:"swap_type"`
-	RetailUserID string            `json:"retail_user_id,omitempty"`
-	DepositType  types.DepositType `json:"deposit_type"`
+	SourceChain   uint64                  `json:"source_chain"`
+	SourceToken   string                  `json:"source_token"`
+	DestChain     uint64                  `json:"dest_chain"`
+	DestToken     string                  `json:"dest_token"`
+	Amount        float64                 `json:"amount"`
+	Slippage      *types.Int              `json:"slippage_bps"`
+	SwapType      types.SwapType          `json:"swap_type"`
+	RetailUserID  string                  `json:"retail_user_id,omitempty"`
+	DepositType   types.DepositType       `json:"deposit_type"`
+	AffiliateFees map[string]RequestedFee `json:"affiliate_fees"`
+}
+
+type RequestedFee struct {
+	FeeBps    *types.Int `json:"fee_bps"`
+	NetworkID uint64     `json:"network_id"`
+	Token     string     `json:"token"`
 }
 
 // GetTheBestQuoteResponse represents the response api type for the quote request.
