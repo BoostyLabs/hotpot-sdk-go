@@ -10,7 +10,6 @@ import (
 type Swap struct {
 	IntentID       uuid.UUID          `json:"intent_id"`
 	Status         CombinedStatus     `json:"status"`
-	KycLink        *string            `json:"kyc_link,omitempty"`
 	Metadata       *SwapMetadata      `json:"swap_metadata,omitempty"`
 	AdditionalInfo SwapAdditionalInfo `json:"additional_info"`
 }
@@ -24,7 +23,6 @@ type SwapMetadata struct {
 	SwapTx            *string    `json:"swap_tx,omitempty"`
 	CreatedAt         time.Time  `json:"created_at"`
 	UserDepositedAt   *time.Time `json:"user_deposited_at,omitempty"`
-	KycRequestedAt    *time.Time `json:"kyc_requested_at,omitempty"`
 	FulfilledAt       *time.Time `json:"fulfilled_at,omitempty"`
 	SwappedAt         *time.Time `json:"swapped_at,omitempty"`
 	RefundedAt        *time.Time `json:"refunded_at,omitempty"`
