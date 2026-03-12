@@ -27,7 +27,7 @@ jobs:
           go mod tidy
           git diff --exit-code go.mod
 
-      - name: Build
+      - name: Build examples
         run: go install ./...
 
       - name: Check tests
