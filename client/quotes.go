@@ -21,6 +21,7 @@ type GetTheBestQuoteRequest struct {
 	AffiliateFees map[string]RequestedFee `json:"affiliate_fees"`
 }
 
+// RequestedFee represents the fee requested for the swap.
 type RequestedFee struct {
 	FeeBps    *types.Int `json:"fee_bps"`
 	NetworkID uint64     `json:"network_id"`

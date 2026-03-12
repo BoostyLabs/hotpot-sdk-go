@@ -103,6 +103,7 @@ func NewCosignIntentApproval(transaction string, userAddress string) IntentAppro
 	}
 }
 
+// MarshalJSON implements json.Marshaler interface.
 func (a *IntentApproval) MarshalJSON() ([]byte, error) {
 	var v = addIntentApprovalRequestCodec{Type: string(a.approvalMechanism)}
 	switch {

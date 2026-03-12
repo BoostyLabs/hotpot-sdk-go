@@ -182,7 +182,7 @@ func GetPermit2Signature(digest []byte, sign func([]byte) ([]byte, error)) (sig 
 	}
 
 	// Normalize to 27/28 for EVM contracts if needed
-	sig[64] = sig[64] + 27
+	sig[64] += 27
 
 	return sig, nil
 }
