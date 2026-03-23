@@ -41,3 +41,23 @@ type SwapAdditionalInfo struct {
 	MinDestAmountLots    *Int   `json:"min_dest_amount_lots"`
 	MaxDestAmountLots    *Int   `json:"max_dest_amount_lots"`
 }
+
+// UiStatus represents a human-readable status of a swap.
+type UiStatus string
+
+const (
+	// UiStatusSubmitted defines the `Submitted` status.
+	UiStatusSubmitted UiStatus = "Submitted"
+	// UiStatusFailed defines the `Failed` status.
+	UiStatusFailed UiStatus = "Failed"
+	// UiStatusExecuting defines the `Executing` status.
+	UiStatusExecuting UiStatus = "Executing"
+	// UiStatusCompleted defines the `Completed` status.
+	UiStatusCompleted UiStatus = "Completed"
+	// UiStatusRefunding defines the `Refunding` status.
+	UiStatusRefunding UiStatus = "Refunding"
+	// UiStatusRefunded defines the `Refunded` status.
+	UiStatusRefunded UiStatus = "Refunded"
+	// UiStatusExpired defines the `Expired` status.
+	UiStatusExpired UiStatus = "Expired"
+)

@@ -24,12 +24,20 @@ func (c *Client) GetSwapByIntentID(ctx context.Context, intentID uuid.UUID) (Get
 
 // ListSwapHistoryParams represents parameters for listing swap history.
 type ListSwapHistoryParams struct {
-	// Limit defines the maximum number of tokens to return.
+	// Limit defines the maximum number of swaps to return.
 	Limit int64
-	// Offset defines the number of tokens to skip.
+	// Offset defines the number of swaps to skip.
 	Offset int64
-	// Active specifies whether to return only active swaps.
-	Active bool
+	// Status defines the swap status filter (optional).
+	Status types.UiStatus
+	// Network defines the swap network filter (optional).
+	Network int64
+	// From defines the swap `from` timestamp filter (optional).
+	From int64
+	// To defines the swap `to` timestamp filter (optional).
+	To int64
+	// Token defines the swap token filter (optional).
+	Token string
 	// Wallets specify addresses filter.
 	Wallets []string
 	// RetailID specifies the retail ID filter.
@@ -47,7 +55,25 @@ func (params *ListSwapHistoryParams) toQueryParams() string {
 		q.Set("offset", strconv.FormatInt(params.Offset, 10))
 	}
 
-	q.Set("active", strconv.FormatBool(params.Active))
+	if params.Status != "" {
+		q.Set("status", string(params.Status))
+	}
+
+	if params.Network != 0 {
+		q.Set("network", strconv.FormatInt(params.Network, 10))
+	}
+
+	if params.From != 0 {
+		q.Set("from", strconv.FormatInt(params.From, 10))
+	}
+
+	if params.To != 0 {
+		q.Set("to", strconv.FormatInt(params.To, 10))
+	}
+
+	if params.Token != "" {
+		q.Set("token", params.Token)
+	}
 
 	for _, wallet := range params.Wallets {
 		q.Add("wallet", wallet)
