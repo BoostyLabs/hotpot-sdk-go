@@ -32,8 +32,8 @@ func main() {
 		DestToken:   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // weth.
 		Amount:      2.,
 		Slippage:    slippageBps,
-		SwapType:    types.SwapTypeStandard,
-		DepositType: types.DepositTypeEscrowed,
+		// SwapType:    types.SwapTypeStandard, // uncomment to override suggested swap type
+		// DepositType: types.DepositTypeEscrowed, // uncomment to override suggested deposit type
 		// RetailUserID: "optional retail user id, now not set",
 		// AffiliateFees: map[string]client.RequestedFee{
 		//	 "affiliate_1": {
