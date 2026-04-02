@@ -15,9 +15,9 @@ type GetTheBestQuoteRequest struct {
 	DestToken     string                  `json:"dest_token"`
 	Amount        float64                 `json:"amount"`
 	Slippage      *types.Int              `json:"slippage_bps"`
-	SwapType      types.SwapType          `json:"swap_type"`
+	SwapType      types.SwapType          `json:"swap_type,omitempty"`
 	RetailUserID  string                  `json:"retail_user_id,omitempty"`
-	DepositType   types.DepositType       `json:"deposit_type"`
+	DepositType   types.DepositType       `json:"deposit_type,omitempty"`
 	AffiliateFees map[string]RequestedFee `json:"affiliate_fees"`
 }
 
