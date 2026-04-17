@@ -25,3 +25,7 @@ const (
 	// CombinedStatusRefunded defines the `Refunded` status.
 	CombinedStatusRefunded CombinedStatus = "Refunded"
 )
+
+func (s CombinedStatus) String() string {
+	return string(s)
+}

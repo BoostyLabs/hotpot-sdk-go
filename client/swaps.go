@@ -40,6 +40,8 @@ type ListSwapHistoryParams struct {
 	Token string
 	// Wallets specify addresses filter.
 	Wallets []string
+	// Statuses specify statusses filter.
+	Statuses []types.CombinedStatus
 	// RetailID specifies the retail ID filter.
 	RetailID string
 }
@@ -81,6 +83,10 @@ func (params *ListSwapHistoryParams) toQueryParams() string {
 
 	if params.RetailID != "" {
 		q.Set("retail_id", params.RetailID)
+	}
+
+	for _, status := range params.Statuses {
+		q.Add("status", status.String())
 	}
 
 	return q.Encode()
