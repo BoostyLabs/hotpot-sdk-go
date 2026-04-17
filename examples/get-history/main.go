@@ -34,7 +34,7 @@ func main() {
 		RetailID: cfg.RetailID,
 		Limit:    cfg.Limit,
 		Offset:   cfg.Offset,
-		Status:   types.UiStatusSubmitted,
+		Statuses: []types.CombinedStatus{types.CombinedStatusAccepted},
 		Network:  cfg.NetworkID,
 		From:     time.Now().UnixMilli() - OneDayInMs,
 		To:       time.Now().UnixMilli() + OneDayInMs,

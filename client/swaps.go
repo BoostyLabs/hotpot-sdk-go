@@ -28,8 +28,6 @@ type ListSwapHistoryParams struct {
 	Limit int64
 	// Offset defines the number of swaps to skip.
 	Offset int64
-	// Status defines the swap status filter (optional).
-	Status types.UiStatus
 	// Network defines the swap network filter (optional).
 	Network int64
 	// From defines the swap `from` timestamp filter (optional).
@@ -55,10 +53,6 @@ func (params *ListSwapHistoryParams) toQueryParams() string {
 
 	if params.Offset != 0 {
 		q.Set("offset", strconv.FormatInt(params.Offset, 10))
-	}
-
-	if params.Status != "" {
-		q.Set("status", string(params.Status))
 	}
 
 	if params.Network != 0 {
