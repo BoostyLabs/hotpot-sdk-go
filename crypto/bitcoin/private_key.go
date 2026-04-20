@@ -52,6 +52,6 @@ func NewPrivateKeyFromMnemonic(mnemonic, passphrase string) (PrivateKey, error) 
 	return PrivateKey{seed: seed}, nil
 }
 
-func (pk PrivateKey) isFromMnemonic() bool {
+func (pk *PrivateKey) isFromMnemonic() bool {
 	return pk.seed != nil
 }
