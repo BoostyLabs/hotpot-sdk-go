@@ -59,6 +59,9 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
+	case types.ApprovalToSignTypeNativeTransfer:
+		resp.NativeTransfer = new(types.ApprovalToSignNativeTransfer)
+		return json.Unmarshal(raw.ParamsToSign, resp.NativeTransfer)
 	default:
 		return fmt.Errorf("unrecognized approval mechanism %v", resp.ApprovalMechanism)
 	}
