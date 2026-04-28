@@ -28,8 +28,6 @@ type ListSwapHistoryParams struct {
 	Limit int64
 	// Offset defines the number of swaps to skip.
 	Offset int64
-	// Status defines the swap status filter (optional).
-	Status types.UiStatus
 	// Network defines the swap network filter (optional).
 	Network int64
 	// From defines the swap `from` timestamp filter (optional).
@@ -40,6 +38,8 @@ type ListSwapHistoryParams struct {
 	Token string
 	// Wallets specify addresses filter.
 	Wallets []string
+	// Statuses specify statusses filter.
+	Statuses []types.CombinedStatus
 	// RetailID specifies the retail ID filter.
 	RetailID string
 }
@@ -53,10 +53,6 @@ func (params *ListSwapHistoryParams) toQueryParams() string {
 
 	if params.Offset != 0 {
 		q.Set("offset", strconv.FormatInt(params.Offset, 10))
-	}
-
-	if params.Status != "" {
-		q.Set("status", string(params.Status))
 	}
 
 	if params.Network != 0 {
@@ -81,6 +77,10 @@ func (params *ListSwapHistoryParams) toQueryParams() string {
 
 	if params.RetailID != "" {
 		q.Set("retail_id", params.RetailID)
+	}
+
+	for _, status := range params.Statuses {
+		q.Add("status", status.String())
 	}
 
 	return q.Encode()
