@@ -16,8 +16,6 @@ const (
 	CombinedStatusAccepted CombinedStatus = "Accepted"
 	// CombinedStatusDeclined defines the `Declined` status.
 	CombinedStatusDeclined CombinedStatus = "Declined"
-	// CombinedStatusDeclinedDueToKytCheck defines the `DeclinedDueToKytCheck` status.
-	CombinedStatusDeclinedDueToKytCheck CombinedStatus = "DeclinedDueToKytCheck"
 	// CombinedStatusUserDeposited defines the `UserDeposited` status.
 	CombinedStatusUserDeposited CombinedStatus = "UserDeposited"
 	// CombinedStatusFulfilled defines the `Fulfilled` status.
