@@ -42,6 +42,8 @@ type ListSwapHistoryParams struct {
 	Statuses []types.CombinedStatus
 	// RetailID specifies the retail ID filter.
 	RetailID string
+	// ReferrerID is an optional referrer id (setup during intent creation) to request history for.
+	ReferrerID string
 }
 
 func (params *ListSwapHistoryParams) toQueryParams() string {
@@ -77,6 +79,10 @@ func (params *ListSwapHistoryParams) toQueryParams() string {
 
 	if params.RetailID != "" {
 		q.Set("retail_id", params.RetailID)
+	}
+
+	if params.ReferrerID != "" {
+		q.Set("referrer_id", params.ReferrerID)
 	}
 
 	for _, status := range params.Statuses {

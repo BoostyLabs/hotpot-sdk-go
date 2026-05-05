@@ -18,6 +18,9 @@ type CreateIntentRequest struct {
 	UserSourceAddress      string    `json:"user_source_address"`
 	UserDestinationAddress string    `json:"user_destination_address"`
 	RefundAddress          string    `json:"refund_address"`
+
+	// ReferrerID is an optional identifier for further filtration.
+	ReferrerID string `json:"referrer_id,omitempty"`
 }
 
 // CreateIntentResponse represents the response payload of creating new intent.
