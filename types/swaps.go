@@ -8,10 +8,12 @@ import (
 
 // Swap represents the swap entity data.
 type Swap struct {
-	IntentID       uuid.UUID          `json:"intent_id"`
-	Status         CombinedStatus     `json:"status"`
-	Metadata       *SwapMetadata      `json:"swap_metadata,omitempty"`
-	AdditionalInfo SwapAdditionalInfo `json:"additional_info"`
+	SwapAdditionalInfo
+
+	IntentID uuid.UUID      `json:"intent_id"`
+	Status   CombinedStatus `json:"status"`
+	Metadata *SwapMetadata  `json:"swap_metadata,omitempty"`
+	Fees     []Fee          `json:"fees"`
 }
 
 // SwapMetadata holds swap extra data.
