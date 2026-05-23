@@ -10,12 +10,13 @@ import (
 // ApprovalToSign defines approval mechanisms used by different blockchains to transfer ownership of funds to resolver.
 //
 // `approvalMechanism` holds the type of approval mechanism required for signing operations, and one of
-// the `permit2|htlc|cosign` fields will be not nil (corresponding).
+// the `permit2|htlc|cosign|nativetransfer` fields will be not nil (corresponding).
 type ApprovalToSign struct {
 	ApprovalMechanism ApprovalToSignType
 	Permit2           *ApprovalToSignPermit2
 	Htlc              *ApprovalToSignHtlc
 	Cosign            *ApprovalToSignCosign
+	NativeTransfer    *ApprovalToSignNativeTransfer
 }
 
 // ApprovalToSignType represents the type of approval mechanism required for signing operations.
@@ -28,6 +29,8 @@ const (
 	ApprovalToSignTypeHtlc ApprovalToSignType = "htlc"
 	// ApprovalToSignTypeCosign defines `cosign` approval types.
 	ApprovalToSignTypeCosign ApprovalToSignType = "cosign"
+	// ApprovalToSignTypeNativeTransfer defines `nativetransfer` approval types.
+	ApprovalToSignTypeNativeTransfer ApprovalToSignType = "nativetransfer"
 )
 
 // ApprovalToSignPermit2 represents parameters of a permit2 approval used to authorize a resolver as a spender.
@@ -68,12 +71,18 @@ type ApprovalToSignCosign struct {
 	Nonce       int64  `json:"nonce"`
 }
 
+// ApprovalToSignNativeTransfer represents parameters of a native transfer approval used for Ethereum/Tron networks.
+type ApprovalToSignNativeTransfer struct {
+	ResolverSignature string `json:"resolver_signature"`
+}
+
 // IntentApproval is a container for the intent approval.
 type IntentApproval struct {
 	approvalMechanism ApprovalToSignType
 	permit2           *string
 	psbt              *string
 	cosign            *CosignApproval
+	nativeTransfer    *string
 }
 
 // NewPermit2IntentApproval creates a new intent approval for permit2.
@@ -103,6 +112,14 @@ func NewCosignIntentApproval(transaction string, userAddress string) IntentAppro
 	}
 }
 
+// NewNativeTransferIntentApproval creates a new intent approval for native transfer.
+func NewNativeTransferIntentApproval(transactionHash string) IntentApproval {
+	return IntentApproval{
+		approvalMechanism: ApprovalToSignTypeNativeTransfer,
+		nativeTransfer:    &transactionHash,
+	}
+}
+
 // MarshalJSON implements json.Marshaler interface.
 func (a *IntentApproval) MarshalJSON() ([]byte, error) {
 	var v = addIntentApprovalRequestCodec{Type: string(a.approvalMechanism)}
@@ -114,6 +131,8 @@ func (a *IntentApproval) MarshalJSON() ([]byte, error) {
 		v.SignedData = *a.psbt
 	case a.approvalMechanism == ApprovalToSignTypeCosign && a.cosign != nil:
 		v.SignedData = *a.cosign
+	case a.approvalMechanism == ApprovalToSignTypeNativeTransfer && a != nil:
+		v.SignedData = *a.nativeTransfer
 	default:
 		return nil, fmt.Errorf("unrecognized approval mechanism %v or missing signed data", a.approvalMechanism)
 	}
