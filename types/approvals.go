@@ -10,12 +10,13 @@ import (
 // ApprovalToSign defines approval mechanisms used by different blockchains to transfer ownership of funds to resolver.
 //
 // `approvalMechanism` holds the type of approval mechanism required for signing operations, and one of
-// the `permit2|htlc|cosign` fields will be not nil (corresponding).
+// the `permit2|htlc|cosign|rgblock` fields will be not nil (corresponding).
 type ApprovalToSign struct {
 	ApprovalMechanism ApprovalToSignType
 	Permit2           *ApprovalToSignPermit2
 	Htlc              *ApprovalToSignHtlc
 	Cosign            *ApprovalToSignCosign
+	RgbLock           *ApprovalToSignRgbLock
 }
 
 // ApprovalToSignType represents the type of approval mechanism required for signing operations.
@@ -28,6 +29,8 @@ const (
 	ApprovalToSignTypeHtlc ApprovalToSignType = "htlc"
 	// ApprovalToSignTypeCosign defines `cosign` approval types.
 	ApprovalToSignTypeCosign ApprovalToSignType = "cosign"
+	// ApprovalToSignTypeRgbLock defines `rgblock` approval types for RGB asset locks on Bitcoin.
+	ApprovalToSignTypeRgbLock ApprovalToSignType = "rgblock"
 )
 
 // ApprovalToSignPermit2 represents parameters of a permit2 approval used to authorize a resolver as a spender.
@@ -68,6 +71,14 @@ type ApprovalToSignCosign struct {
 	Nonce       int64  `json:"nonce"`
 }
 
+// ApprovalToSignRgbLock represents parameters of an RGB lock approval used for Bitcoin network.
+type ApprovalToSignRgbLock struct {
+	Psbt           string `json:"psbt"`
+	WitnessInvoice string `json:"witness_invoice"`
+	LockAddress    string `json:"lock_address,omitempty"`
+	Inputs         []int  `json:"inputs,omitempty"`
+}
+
 // IntentApproval is a container for the intent approval.
 type IntentApproval struct {
 	approvalMechanism ApprovalToSignType
@@ -92,6 +103,14 @@ func NewHtlcIntentApproval(psbt string) IntentApproval {
 	}
 }
 
+// NewRgbLockIntentApproval creates a new intent approval for an RGB lock.
+func NewRgbLockIntentApproval(psbt string) IntentApproval {
+	return IntentApproval{
+		approvalMechanism: ApprovalToSignTypeRgbLock,
+		psbt:              &psbt,
+	}
+}
+
 // NewCosignIntentApproval creates a new intent approval for cosign.
 func NewCosignIntentApproval(transaction string, userAddress string) IntentApproval {
 	return IntentApproval{
@@ -110,6 +129,9 @@ func (a *IntentApproval) MarshalJSON() ([]byte, error) {
 	case a.approvalMechanism == ApprovalToSignTypePermit2 && a.permit2 != nil:
 		v.SignedData = *a.permit2
 	case a.approvalMechanism == ApprovalToSignTypeHtlc && a.psbt != nil:
+		v.Type = "psbt"
+		v.SignedData = *a.psbt
+	case a.approvalMechanism == ApprovalToSignTypeRgbLock && a.psbt != nil:
 		v.Type = "psbt"
 		v.SignedData = *a.psbt
 	case a.approvalMechanism == ApprovalToSignTypeCosign && a.cosign != nil:
