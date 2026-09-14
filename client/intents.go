@@ -40,6 +40,7 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 		SecretHash        string                   `json:"secret_hash"`
 		ApprovalMechanism types.ApprovalToSignType `json:"approval_mechanism"`
 		ParamsToSign      json.RawMessage          `json:"params_to_sign"`
+		TransferAddress   string                   `json:"transfer_address"`
 	}
 
 	var raw createIntentResponseCodec
@@ -62,6 +63,14 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
+	case types.ApprovalToSignTypeNone:
+		if raw.TransferAddress == "" {
+			return fmt.Errorf("no approval mechanism and no transfer address in the response")
+		}
+
+		resp.Transfer = &types.ApprovalToSignTransfer{Address: raw.TransferAddress}
+
+		return nil
 	default:
 		return fmt.Errorf("unrecognized approval mechanism %v", resp.ApprovalMechanism)
 	}
@@ -86,6 +95,25 @@ func (c *Client) AddIntentApproval(ctx context.Context, params AddIntentApproval
 	endpoint := c.buildURL("intents/%s/approvals", params.IntentID.String())
 
 	return c.doRequest(ctx, http.MethodPost, endpoint, &params.Approval, nil)
+}
+
+// SubmitDepositParams represents parameters required to report a deposit the user made themselves.
+type SubmitDepositParams struct {
+	IntentID uuid.UUID `json:"-"`
+	TxHash string `json:"tx_hash"`
+}
+
+// SubmitDepositResponse represents the response from the SubmitDeposit API endpoint.
+type SubmitDepositResponse struct {
+	FulfillmentDeadline int64 `json:"fulfillment_deadline"`
+}
+
+// SubmitDeposit reports the transaction hash of a transfer the user broadcast themselves.
+func (c *Client) SubmitDeposit(ctx context.Context, params SubmitDepositParams) (SubmitDepositResponse, error) {
+	var resp SubmitDepositResponse
+	endpoint := c.buildURL("intents/%s/deposit", params.IntentID.String())
+
+	return resp, c.doRequest(ctx, http.MethodPost, endpoint, &params, &resp)
 }
 
 // GetIntentStatusResponse represents the response from the GetIntentStatus API endpoint.
