@@ -29,8 +29,8 @@ const (
 	ApprovalToSignTypeHtlc ApprovalToSignType = "htlc"
 	// ApprovalToSignTypeCosign defines `cosign` approval types.
 	ApprovalToSignTypeCosign ApprovalToSignType = "cosign"
-	// ApprovalToSignTypeNone is sent when no signature is needed
-	ApprovalToSignTypeNone ApprovalToSignType = ""
+	// ApprovalToSignTypeTransfer defines the user-transfer flow.
+	ApprovalToSignTypeTransfer ApprovalToSignType = "transfer"
 )
 
 // ApprovalToSignPermit2 represents parameters of a permit2 approval used to authorize a resolver as a spender.

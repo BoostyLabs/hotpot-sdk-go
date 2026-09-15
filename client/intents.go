@@ -63,9 +63,9 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
-	case types.ApprovalToSignTypeNone:
+	case types.ApprovalToSignTypeTransfer:
 		if raw.TransferAddress == "" {
-			return fmt.Errorf("no approval mechanism and no transfer address in the response")
+			return fmt.Errorf("transfer approval mechanism without a transfer address")
 		}
 
 		resp.Transfer = &types.ApprovalToSignTransfer{Address: raw.TransferAddress}
@@ -100,7 +100,7 @@ func (c *Client) AddIntentApproval(ctx context.Context, params AddIntentApproval
 // SubmitDepositParams represents parameters required to report a deposit the user made themselves.
 type SubmitDepositParams struct {
 	IntentID uuid.UUID `json:"-"`
-	TxHash string `json:"tx_hash"`
+	TxHash   string    `json:"tx_hash"`
 }
 
 // SubmitDepositResponse represents the response from the SubmitDeposit API endpoint.
