@@ -4,7 +4,9 @@ This package provides utilities for signing Permit2 approvals on the Tron networ
 
 ## Signer
 
-Tron signing reuses the EVM `Signer` from the `crypto/evm` package. You can create an EVM signer and use it with Tron-specific typed data built by this package.
+Tron typed data signing reuses the EVM `Signer` from the `crypto/evm` package. You can create an EVM signer and use it with Tron-specific typed data built by this package.
+
+For transaction composing and sending, a separate strcuture `SignerSender` is provided. It exposes the method `SignAndSend` that builds a transaciton with provided data and broadcasts it.
 
 ### Functions
 

@@ -28,6 +28,10 @@ const (
 	ApprovalToSignTypeHtlc ApprovalToSignType = "htlc"
 	// ApprovalToSignTypeCosign defines `cosign` approval types.
 	ApprovalToSignTypeCosign ApprovalToSignType = "cosign"
+	// ApprovalToSignTypeUserBroadcast defines `user broadcast` approval types, there is no approval data in this case.
+	ApprovalToSignTypeUserBroadcast ApprovalToSignType = "broadcast"
+	// ApprovalToSignTypeUserTransfer defines `user transfer` approval types, there is no approval data in this case.
+	ApprovalToSignTypeUserTransfer ApprovalToSignType = "transfer"
 )
 
 // ApprovalToSignPermit2 represents parameters of a permit2 approval used to authorize a resolver as a spender.
