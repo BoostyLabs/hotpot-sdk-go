@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -65,7 +66,7 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
 	case types.ApprovalToSignTypeTransfer:
 		if raw.TransferAddress == "" {
-			return fmt.Errorf("transfer approval mechanism without a transfer address")
+			return errors.New("transfer approval mechanism without a transfer address")
 		}
 
 		resp.Transfer = &types.ApprovalToSignTransfer{Address: raw.TransferAddress}
