@@ -17,6 +17,9 @@ Signs the Permit2 approval for the provided signer and returns the signature in 
 #### `(s *Signer) SignPermit2(typesData apitypes.TypedData) ([]byte, error)`
 A method on `Signer` that signs the Permit2 approval with the provided typed data and returns the raw signature bytes.
 
+#### `func (s *Signer) SignTransaction(...) (*evmTypes.Transaction, error)`
+Constructs and signs an EVM transaction.
+
 ## Usage Example
 
 The following example demonstrates how to use the `Signer` to sign a Permit2 approval.
@@ -62,6 +65,66 @@ func main() {
 	// 3. Use the signed Permit2 signature as an approval.
 	fmt.Println("Signed Permit2 Hex:", signedPermit2Hex)
 	_ = types.NewPermit2IntentApproval(signedPermit2Hex)
+}
+```
+
+Transaction signing and broadcasting example.
+```go
+package main
+
+import (
+    "log"
+    "context"
+
+    "github.com/ethereum/go-ethereum/ethclient"
+    "github.com/ethereum/go-ethereum/common"
+
+    "github.com/BoostyLabs/hotpot-sdk-go/crypto/evm"
+)
+
+func main() {
+    var (
+        signerPrivateKeyHex string = "..."
+        rpcURL string = "https://..."
+        chainID *big.Int = big.NewInt(...)
+        escrowRouterAddress = common.hexToAddress("0x...")
+        value *big.Int = big.NewInt(...)
+        dataHex string = "0x..."
+        nonce uint64 = ...
+        gasLimit uint64 = ...
+        maxPriorityFeePerGas *big.Int = big.NewInt(...)
+        maxFeePerGas *big.Int = big.NewInt(...)
+    )
+
+    client, err := ethclient.Dial(rpcURL)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer client.Close()
+
+    signer, err := evm.NewSigner(signerPrivateKeyHex)
+    if err != nil {
+        log.Fatalf("failed to create signer: %v", err)
+    }
+
+    tx, err := signer.SignTransaction(
+        chainID,
+        escrowRouterAddress,
+        value,
+        dataHex,
+        nonce,
+        gasLimit,
+        maxPriorityFeePerGas,
+        maxFeePerGas,
+    )
+    if err != nil {
+        log.Fatalf("failed to sign transaction: %v", err)
+    }
+
+    err = client.SendTransaction(context.Background(), signedTx)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 
