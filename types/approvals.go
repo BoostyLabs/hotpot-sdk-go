@@ -10,12 +10,13 @@ import (
 // ApprovalToSign defines approval mechanisms used by different blockchains to transfer ownership of funds to resolver.
 //
 // `approvalMechanism` holds the type of approval mechanism required for signing operations, and one of
-// the `permit2|htlc|cosign` fields will be not nil (corresponding).
+// the `permit2|htlc|cosign|transfer` fields will be not nil (corresponding).
 type ApprovalToSign struct {
 	ApprovalMechanism ApprovalToSignType
 	Permit2           *ApprovalToSignPermit2
 	Htlc              *ApprovalToSignHtlc
 	Cosign            *ApprovalToSignCosign
+	Transfer          *ApprovalToSignTransfer
 }
 
 // ApprovalToSignType represents the type of approval mechanism required for signing operations.
@@ -28,6 +29,8 @@ const (
 	ApprovalToSignTypeHtlc ApprovalToSignType = "htlc"
 	// ApprovalToSignTypeCosign defines `cosign` approval types.
 	ApprovalToSignTypeCosign ApprovalToSignType = "cosign"
+	// ApprovalToSignTypeTransfer defines the user-transfer flow.
+	ApprovalToSignTypeTransfer ApprovalToSignType = "transfer"
 )
 
 // ApprovalToSignPermit2 represents parameters of a permit2 approval used to authorize a resolver as a spender.
@@ -47,6 +50,11 @@ type Permit2AdditionalData struct {
 	Witness     json.RawMessage          `json:"witness"`
 	WitnessType string                   `json:"witness_type_string"`
 	WitnessHash string                   `json:"witness_hash"`
+}
+
+// ApprovalToSignTransfer carries the address the user sends a plain transfer to.
+type ApprovalToSignTransfer struct {
+	Address string
 }
 
 // ParseWitness unmarshalls raw witness data into the provided struct.

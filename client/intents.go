@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -40,6 +41,7 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 		SecretHash        string                   `json:"secret_hash"`
 		ApprovalMechanism types.ApprovalToSignType `json:"approval_mechanism"`
 		ParamsToSign      json.RawMessage          `json:"params_to_sign"`
+		TransferAddress   string                   `json:"transfer_address"`
 	}
 
 	var raw createIntentResponseCodec
@@ -62,6 +64,14 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
+	case types.ApprovalToSignTypeTransfer:
+		if raw.TransferAddress == "" {
+			return errors.New("transfer approval mechanism without a transfer address")
+		}
+
+		resp.Transfer = &types.ApprovalToSignTransfer{Address: raw.TransferAddress}
+
+		return nil
 	default:
 		return fmt.Errorf("unrecognized approval mechanism %v", resp.ApprovalMechanism)
 	}
@@ -86,6 +96,19 @@ func (c *Client) AddIntentApproval(ctx context.Context, params AddIntentApproval
 	endpoint := c.buildURL("intents/%s/approvals", params.IntentID.String())
 
 	return c.doRequest(ctx, http.MethodPost, endpoint, &params.Approval, nil)
+}
+
+// SubmitDepositParams represents parameters required to report a deposit the user made themselves.
+type SubmitDepositParams struct {
+	IntentID uuid.UUID `json:"-"`
+	TxHash   string    `json:"tx_hash"`
+}
+
+// SubmitDeposit reports the transaction hash of a transfer the user broadcast themselves.
+func (c *Client) SubmitDeposit(ctx context.Context, params SubmitDepositParams) error {
+	endpoint := c.buildURL("intents/%s/deposit", params.IntentID.String())
+
+	return c.doRequest(ctx, http.MethodPost, endpoint, &params, nil)
 }
 
 // GetIntentStatusResponse represents the response from the GetIntentStatus API endpoint.

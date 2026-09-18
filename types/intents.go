@@ -26,6 +26,10 @@ const (
 	CombinedStatusRefundRequested CombinedStatus = "RefundRequested"
 	// CombinedStatusRefunded defines the `Refunded` status.
 	CombinedStatusRefunded CombinedStatus = "Refunded"
+	// CombinedStatusAwaitingBroadcast defines the `AwaitingBroadcast` status.
+	CombinedStatusAwaitingBroadcast CombinedStatus = "AwaitingBroadcast"
+	// CombinedStatusLapsed defines the `Lapsed` status.
+	CombinedStatusLapsed CombinedStatus = "Lapsed"
 )
 
 func (s CombinedStatus) String() string {
