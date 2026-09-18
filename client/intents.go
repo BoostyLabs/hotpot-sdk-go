@@ -104,17 +104,11 @@ type SubmitDepositParams struct {
 	TxHash   string    `json:"tx_hash"`
 }
 
-// SubmitDepositResponse represents the response from the SubmitDeposit API endpoint.
-type SubmitDepositResponse struct {
-	FulfillmentDeadline int64 `json:"fulfillment_deadline"`
-}
-
 // SubmitDeposit reports the transaction hash of a transfer the user broadcast themselves.
-func (c *Client) SubmitDeposit(ctx context.Context, params SubmitDepositParams) (SubmitDepositResponse, error) {
-	var resp SubmitDepositResponse
+func (c *Client) SubmitDeposit(ctx context.Context, params SubmitDepositParams) error {
 	endpoint := c.buildURL("intents/%s/deposit", params.IntentID.String())
 
-	return resp, c.doRequest(ctx, http.MethodPost, endpoint, &params, &resp)
+	return c.doRequest(ctx, http.MethodPost, endpoint, &params, nil)
 }
 
 // GetIntentStatusResponse represents the response from the GetIntentStatus API endpoint.
