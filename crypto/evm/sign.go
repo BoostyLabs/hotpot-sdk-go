@@ -2,8 +2,13 @@ package evm
 
 import (
 	"crypto/ecdsa"
+	"encoding/hex"
 	"fmt"
+	"math/big"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/common"
+	evmTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 
@@ -31,6 +36,44 @@ func (s *Signer) SignPermit2(typesData apitypes.TypedData) ([]byte, error) {
 	}
 
 	return GetPermit2Signature(digest, func(digest []byte) ([]byte, error) { return crypto.Sign(digest, s.pk) })
+}
+
+// SignTransaction composes and signs an EVM transaction using the signer's private key.
+// Returns the signed transaction.
+func (s *Signer) SignTransaction(
+	chainID *big.Int,
+	to *common.Address,
+	value *big.Int,
+	dataHex string,
+	nonce uint64,
+	gasLimit uint64,
+	maxPriorityFeePerGas *big.Int,
+	maxFeePerGas *big.Int,
+) (*evmTypes.Transaction, error) {
+	dataBytes, err := hex.DecodeString(strings.TrimPrefix(dataHex, "0x"))
+	if err != nil {
+		return nil, err
+	}
+
+	tx := evmTypes.NewTx(&evmTypes.DynamicFeeTx{
+		ChainID:   chainID,
+		Nonce:     nonce,
+		To:        to,
+		Value:     value,
+		Gas:       gasLimit,
+		GasTipCap: maxPriorityFeePerGas,
+		GasFeeCap: maxFeePerGas,
+		Data:      dataBytes,
+	})
+
+	signatureManager := evmTypes.LatestSignerForChainID(chainID)
+
+	signedTx, err := evmTypes.SignTx(tx, signatureManager, s.pk)
+	if err != nil {
+		return nil, err
+	}
+
+	return signedTx, nil
 }
 
 // SignPermit2 signs permit2 approval with for provided signer, returning the signature in hex encoding with the '0x' prefix.
