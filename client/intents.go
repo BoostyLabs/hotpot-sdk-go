@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -121,6 +122,7 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 		SecretHash        string                   `json:"secret_hash"`
 		ApprovalMechanism types.ApprovalToSignType `json:"approval_mechanism"`
 		ParamsToSign      json.RawMessage          `json:"params_to_sign"`
+		TransferAddress   string                   `json:"transfer_address"`
 		DepositTxData     *UBCalldata              `json:"deposit_tx_data"`
 	}
 
@@ -145,9 +147,15 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
-	case types.ApprovalToSignTypeUserBroadcast:
-		// No params to deserialize in this case.
 	case types.ApprovalToSignTypeUserTransfer:
+		if raw.TransferAddress == "" {
+			return errors.New("transfer approval mechanism without a transfer address")
+		}
+
+		resp.Transfer = &types.ApprovalToSignTransfer{Address: raw.TransferAddress}
+
+		return nil
+	case types.ApprovalToSignTypeUserBroadcast:
 		// No params to deserialize in this case.
 	default:
 		return fmt.Errorf("unrecognized approval mechanism %v", resp.ApprovalMechanism)

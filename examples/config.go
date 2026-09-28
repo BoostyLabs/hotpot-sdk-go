@@ -25,6 +25,7 @@ type Config struct {
 	Limit           int64     `env:"LIMIT,unset" envDefault:"10"`
 	Offset          int64     `env:"OFFSET,unset" envDefault:"0"`
 	IntentID        uuid.UUID `env:"INTENT_ID,unset"`
+	TxHash          string    `env:"TX_HASH,unset"`
 }
 
 // LoadConfig loads the configurations from environment variables.
