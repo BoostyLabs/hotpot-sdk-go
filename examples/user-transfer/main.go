@@ -69,9 +69,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create intent: %v", err)
 	}
-	if intentResp.ApprovalMechanism != types.ApprovalToSignTypeTransfer {
+	if intentResp.ApprovalMechanism != types.ApprovalToSignTypeUserTransfer {
 		log.Fatalf("expected the %q approval mechanism, got %q",
-			types.ApprovalToSignTypeTransfer, intentResp.ApprovalMechanism)
+			types.ApprovalToSignTypeUserTransfer, intentResp.ApprovalMechanism)
 	}
 
 	log.Printf("Intent %s awaits %s lots at %s",
@@ -85,7 +85,7 @@ func main() {
 
 	log.Printf("Transferred in %s", txHash)
 
-	err = apiClient.SubmitDeposit(ctx, client.SubmitDepositParams{
+	_, err = apiClient.SubmitDeposit(ctx, client.SubmitDepositParams{
 		IntentID: intentResp.ID,
 		TxHash:   txHash,
 	})
