@@ -31,6 +31,10 @@ const (
 	ApprovalToSignTypeCosign ApprovalToSignType = "cosign"
 	// ApprovalToSignTypeRgbLock defines `rgblock` approval types for RGB asset locks on Bitcoin.
 	ApprovalToSignTypeRgbLock ApprovalToSignType = "rgblock"
+	// ApprovalToSignTypeUserBroadcast defines `user broadcast` approval types, there is no approval data in this case.
+	ApprovalToSignTypeUserBroadcast ApprovalToSignType = "broadcast"
+	// ApprovalToSignTypeUserTransfer defines `user transfer` approval types, there is no approval data in this case.
+	ApprovalToSignTypeUserTransfer ApprovalToSignType = "transfer"
 )
 
 // ApprovalToSignPermit2 represents parameters of a permit2 approval used to authorize a resolver as a spender.
