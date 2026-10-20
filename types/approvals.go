@@ -30,6 +30,8 @@ const (
 	ApprovalToSignTypeHtlc ApprovalToSignType = "htlc"
 	// ApprovalToSignTypeCosign defines `cosign` approval types.
 	ApprovalToSignTypeCosign ApprovalToSignType = "cosign"
+	// ApprovalToSignTypeRgbLock defines `rgblock` approval types for RGB asset locks on Bitcoin.
+	ApprovalToSignTypeRgbLock ApprovalToSignType = "rgblock"
 	// ApprovalToSignTypeUserBroadcast defines `user broadcast` approval types, there is no approval data in this case.
 	ApprovalToSignTypeUserBroadcast ApprovalToSignType = "broadcast"
 	// ApprovalToSignTypeUserTransfer defines `user transfer` approval types, there is no approval data in this case.

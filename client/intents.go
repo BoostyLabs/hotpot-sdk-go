@@ -147,6 +147,11 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
+	case types.ApprovalToSignTypeRgbLock:
+		resp.RgbLock = new(types.ApprovalToSignRgbLock)
+		return json.Unmarshal(raw.ParamsToSign, resp.RgbLock)
+	case types.ApprovalToSignTypeUserBroadcast:
+		// No params to deserialize in this case.
 	case types.ApprovalToSignTypeUserTransfer:
 		if raw.TransferAddress == "" {
 			return errors.New("transfer approval mechanism without a transfer address")
