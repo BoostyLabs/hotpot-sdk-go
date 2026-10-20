@@ -160,11 +160,6 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 		resp.Transfer = &types.ApprovalToSignTransfer{Address: raw.TransferAddress}
 
 		return nil
-	case types.ApprovalToSignTypeUserBroadcast:
-		// No params to deserialize in this case.
-	case types.ApprovalToSignTypeRgbLock:
-		resp.RgbLock = new(types.ApprovalToSignRgbLock)
-		return json.Unmarshal(raw.ParamsToSign, resp.RgbLock)
 	default:
 		return fmt.Errorf("unrecognized approval mechanism %v", resp.ApprovalMechanism)
 	}
