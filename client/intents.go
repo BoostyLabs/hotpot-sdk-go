@@ -39,6 +39,7 @@ type UBCalldata struct {
 	Psbt    *UBCalldataPsbt
 	Cosign  *UBCalldataCosign
 	EvmLike *UBCalldataEvm
+	RgbLock *UBCalldataRgbLock
 }
 
 // UBCalldataPsbt contains the Bitcoin transaction calldata for user to sign and broadcast.
@@ -58,6 +59,11 @@ type UBCalldataCosign struct {
 type UBCalldataEvm struct {
 	Transaction            string `json:"transaction"`
 	ResolverDepositAddress string `json:"resolver_deposit_address"`
+}
+
+// UBCalldataRgbLock contains the invoice an RGB wallet pays to make the deposit.
+type UBCalldataRgbLock struct {
+	WitnessInvoice string `json:"witness_invoice"`
 }
 
 // BitcoinPsbt contains a bitcoin PSBT and taproot control blocks.
@@ -106,6 +112,13 @@ func (u *UBCalldata) UnmarshalJSON(data []byte) error {
 			}
 			u.EvmLike = &value
 
+		case "RgbLock":
+			var value UBCalldataRgbLock
+			if err := json.Unmarshal(payload, &value); err != nil {
+				return fmt.Errorf("decode RgbLock: %w", err)
+			}
+			u.RgbLock = &value
+
 		default:
 			return fmt.Errorf("unrecognized deposit_tx_data variant %q", variant)
 		}
@@ -147,9 +160,6 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	case types.ApprovalToSignTypeCosign:
 		resp.Cosign = new(types.ApprovalToSignCosign)
 		return json.Unmarshal(raw.ParamsToSign, resp.Cosign)
-	case types.ApprovalToSignTypeRgbLock:
-		resp.RgbLock = new(types.ApprovalToSignRgbLock)
-		return json.Unmarshal(raw.ParamsToSign, resp.RgbLock)
 	case types.ApprovalToSignTypeUserBroadcast:
 		// No params to deserialize in this case.
 	case types.ApprovalToSignTypeUserTransfer:
