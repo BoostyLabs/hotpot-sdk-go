@@ -26,9 +26,10 @@ type CreateIntentRequest struct {
 
 // CreateIntentResponse represents the response payload of creating new intent.
 type CreateIntentResponse struct {
-	ID         uuid.UUID
-	Deadline   int64 // In seconds.
-	SecretHash string
+	ID              uuid.UUID
+	Deadline        int64 // In seconds.
+	DepositDeadline int64 // In seconds, the user's deposit must be mined and submitted by.
+	SecretHash      string
 
 	types.ApprovalToSign
 	DepositTxData *UBCalldata
@@ -132,6 +133,7 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 	type createIntentResponseCodec struct {
 		ID                uuid.UUID                `json:"intent_id"`
 		Deadline          int64                    `json:"deadline_secs"`
+		DepositDeadline   int64                    `json:"deposit_deadline_secs"`
 		SecretHash        string                   `json:"secret_hash"`
 		ApprovalMechanism types.ApprovalToSignType `json:"approval_mechanism"`
 		ParamsToSign      json.RawMessage          `json:"params_to_sign"`
@@ -146,6 +148,7 @@ func (resp *CreateIntentResponse) UnmarshalJSON(data []byte) error {
 
 	resp.ID = raw.ID
 	resp.Deadline = raw.Deadline
+	resp.DepositDeadline = raw.DepositDeadline
 	resp.SecretHash = raw.SecretHash
 	resp.ApprovalToSign = types.ApprovalToSign{ApprovalMechanism: raw.ApprovalMechanism}
 	resp.DepositTxData = raw.DepositTxData
